@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # System folders
 Application Data/
 Cookies/
@@ -20,6 +21,8 @@ db.sqlite3
 # IDE
 .idea/
 .vscode/
+=======
+>>>>>>> frontend
 
 # OS
 .DS_Store
