@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Place
 import random
+from .forms import PlaceForm
 
 
 def index1(request):
@@ -39,4 +40,14 @@ def all_places(request):
 
 
 def add_place(request):
-    return render(request, 'places/add_place.html')
+    if request.method == "POST":
+        form = PlaceForm(request.POST, request.FILES)
+        if form.is_valid():
+            place = form.save(commit=False)
+            place.user = request.user
+            place.save()
+            return redirect('all_places')
+    else:
+        form = PlaceForm()
+
+    return render(request, 'places/add_place.html', {'form': form})
