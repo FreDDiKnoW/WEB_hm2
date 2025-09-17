@@ -1,25 +1,3 @@
-# System folders
-Application Data/
-Cookies/
-Local Settings/
-My Documents/
-NetHood/
-PrintHood/
-Recent/
-SendTo/
-Start Menu/
-Templates/
-
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-db.sqlite3
-
-# IDE
-.idea/
-.vscode/
 
 # OS
 .DS_Store

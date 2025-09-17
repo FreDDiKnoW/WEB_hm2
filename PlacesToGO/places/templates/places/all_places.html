@@ -1,0 +1,431 @@
+{% extends 'places/base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="text-center mb-4">Усі мої місця</h1>
+
+        {% if places %}
+            <div class="row g-4 mb-4">
+                {% for place in places %}
+                <div class="col-md-4">
+                    <div class="place-card h-100" data-bs-toggle="modal" data-bs-target="#placeModal{{ place.id }}">
+                        <div class="place-image-container">
+                            {% if place.image %}
+                                <img src="{{ place.image.url }}" alt="{{ place.name }}" class="place-image">
+                            {% else %}
+                                <div class="place-image place-no-image">
+                                    <i class="fas fa-image fa-3x text-muted"></i>
+                                    <p class="mt-2 text-muted">Немає фото</p>
+                                </div>
+                            {% endif %}
+
+                            <div class="place-overlay">
+                                <div class="place-info">
+                                    <h5 class="place-title">{{ place.name }}</h5>
+
+                                    <div class="place-details">
+                                        <div class="detail-item">
+                                            <span class="detail-label">Тип:</span>
+                                            <span class="badge
+                                                {% if place.place_type == 'restaurant' %}bg-success
+                                                {% elif place.place_type == 'cafe' %}bg-warning text-dark
+                                                {% elif place.place_type == 'park' %}bg-success
+                                                {% elif place.place_type == 'museum' %}bg-info
+                                                {% elif place.place_type == 'cinema' %}bg-danger
+                                                {% else %}bg-secondary
+                                                {% endif %}">
+                                                {{ place.get_place_type_display_custom }}
+                                            </span>
+                                        </div>
+
+                                        {% if place.location %}
+                                        <div class="detail-item">
+                                            <span class="detail-label">Локація:</span>
+                                            <span class="detail-value">
+                                                <i class="fas fa-map-marker-alt text-danger"></i> {{place.location}}
+                                            </span>
+                                        </div>
+                                        {% endif %}
+
+                                        <div class="detail-item">
+                                            <span class="detail-label">Рейтинг:</span>
+                                            <span class="detail-value">
+                                                {% for i in "12345" %}
+                                                    {% if forloop.counter <= place.rating %}
+                                                        <i class="fas fa-star text-warning"></i>
+                                                    {% else %}
+                                                        <i class="far fa-star text-muted"></i>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <small class="ms-1">({{ place.rating }}/5)</small>
+                                            </span>
+                                        </div>
+
+                                        <div class="detail-item">
+                                            <span class="detail-label">Опис:</span>
+                                            <p class="detail-description">{{ place.description }}</p>
+                                        </div>
+
+                                        <div class="detail-item">
+                                            <span class="detail-label">Дата створення:</span>
+                                            <span class="detail-value">{{ place.created_date|date:"d.m.Y H:i" }}</span>
+                                        </div>
+                                        {% if place.user.username != 'admin' %}
+                                        <div class="detail-item">
+                                            <span class="detail-label">Автор:</span>
+                                            <span class="badge bg-primary">{{ place.user.username }}</span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="text-center mt-4">
+                <p class="text-muted">Всього місць: <strong>{{places|length}}</strong></p>
+                <a href="/add_place/" class="btn btn-success btn-lg">
+                    <i class="fas fa-plus"></i> Додати нове місце
+                </a>
+            </div>
+        {% else %}
+            <div class="text-center">
+                <div class="mb-4">
+                    <i class="fas fa-map-marked-alt fa-5x text-muted"></i>
+                </div>
+                <h3 class="text-muted">У вас ще немає доданих місць</h3>
+                <p class="text-muted">Почніть додавати цікаві місця, які ви відвідали або плануєте відвідати!</p>
+                <a href="/add_place/" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus"></i> Додати перше місце
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% for place in places %}
+<div class="modal fade" id="placeModal{{ place.id }}" tabindex="-1" aria-labelledby="placeModalLabel{{ place.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content modal-transparent">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-white" id="placeModalLabel{{ place.id }}">{{ place.name }}</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Закрити"></button>
+            </div>
+            <div class="modal-body p-4 pt-2">
+                <div class="row align-items-start">
+                    <div class="col-md-6">
+                        <div class="modal-image-wrapper">
+                            {% if place.image %}
+                                <img src="{{ place.image.url }}" alt="{{ place.name }}" class="modal-main-image">
+                            {% else %}
+                                <div class="modal-no-image-large">
+                                    <i class="fas fa-image fa-4x text-light mb-3"></i>
+                                    <p class="text-light fs-5">Немає фото</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="modal-description-panel">
+                            <div class="description-block">
+                                <h6 class="info-header">Детальний опис</h6>
+                                <div class="description-full">
+                                    <p class="info-text description-text">{{ place.description|linebreaksbr }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<style>
+.place-card {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.place-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.place-image-container {
+    position: relative;
+    height: 280px;
+    overflow: hidden;
+}
+
+.place-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.place-card:hover .place-image {
+    transform: scale(1.05);
+}
+
+.place-no-image {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.place-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 0.7) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    align-items: flex-end;
+    padding: 20px;
+}
+
+.place-card:hover .place-overlay {
+    opacity: 1;
+}
+
+.place-info {
+    color: white;
+    width: 100%;
+}
+
+.place-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 7px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    text-align: right;
+}
+
+.place-details {
+    display: none;
+}
+
+.place-card:hover .place-details {
+    display: block;
+    animation: fadeInUp 0.3s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.detail-item {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.detail-label {
+    font-weight: 600;
+    min-width: 80px;
+    font-size: 0.9rem;
+}
+
+.detail-value {
+    flex: 1;
+    font-size: 0.9rem;
+}
+
+.detail-description {
+    flex: 1;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin: 0;
+    max-height: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.6rem;
+}
+
+.modal-transparent {
+    background-color: rgba(40, 40, 40, 0.85) !important;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+
+.modal-image-wrapper {
+    position: relative;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    height: 320px;
+}
+
+.modal-main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.modal-main-image:hover {
+    transform: scale(1.02);
+}
+
+.modal-no-image-large {
+    height: 100%;
+    background: linear-gradient(135deg, rgba(108, 117, 125, 0.3) 0%, rgba(52, 58, 64, 0.3) 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+}
+
+.modal-description-panel {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 1rem;
+    height: 320px;
+    overflow: visible;
+}
+
+.description-block {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-bottom: none;
+}
+
+.info-header {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.4rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.info-text {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 0.9rem;
+    line-height: 1.3;
+    margin: 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.description-text {
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.description-full {
+    overflow: visible;
+    max-height: none;
+    flex-grow: 1;
+}
+.modal.fade .modal-dialog {
+    transform: scale(0.8);
+    transition: transform 0.3s ease-in-out;
+}
+
+.modal.show .modal-dialog {
+    transform: scale(1);
+}
+
+@media (max-width: 768px) {
+    .place-image-container {
+        height: 220px;
+    }
+
+    .place-title {
+        font-size: 1.25rem;
+    }
+
+    .place-overlay {
+        padding: 15px;
+    }
+
+    .detail-label {
+        min-width: 70px;
+        font-size: 0.8rem;
+    }
+
+    .detail-value {
+        font-size: 0.8rem;
+    }
+
+    .detail-description {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .place-image-container {
+        height: 200px;
+    }
+}
+
+@media (max-width: 992px) {
+    .modal-image-wrapper {
+        height: auto;
+        margin-bottom: 2rem;
+    }
+
+    .modal-transparent .modal-title {
+        font-size: 1.5rem;
+    }
+
+}
+
+@media (max-width: 768px) {
+    .modal-transparent .modal-header,
+    .modal-footer {
+        padding: 1rem;
+    }
+
+    .modal-transparent .modal-title {
+        font-size: 1.3rem;
+    }
+}
+</style>
+{% endblock %}
