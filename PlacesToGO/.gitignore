@@ -1,0 +1,38 @@
+<<<<<<< HEAD
+# System folders
+Application Data/
+Cookies/
+Local Settings/
+My Documents/
+NetHood/
+PrintHood/
+Recent/
+SendTo/
+Start Menu/
+Templates/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
+
+# IDE
+.idea/
+.vscode/
+=======
+>>>>>>> frontend
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node.js
+node_modules/
+npm-debug.log*
+
+# Virtual environments
+venv/
+env/
+EOF
